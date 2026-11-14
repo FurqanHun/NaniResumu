@@ -82,7 +82,8 @@ class ResumeServerHandler(BaseHTTPRequestHandler):
                         "certifications": load_json(DATA_DIR / "certifications.json"),
                         "roles": load_json(DATA_DIR / "roles.json")
                     }
-                    state = build_role_resume(role, env_vars, master_data)
+                    res = build_role_resume(role, env_vars, master_data)
+                    state = res[0] if isinstance(res, tuple) else res
                     BUILD_DIR.mkdir(parents=True, exist_ok=True)
                     with open(build_file, "w", encoding="utf-8") as f:
                         json.dump(state, f, indent=2)
@@ -146,7 +147,8 @@ class ResumeServerHandler(BaseHTTPRequestHandler):
                 BUILD_DIR.mkdir(parents=True, exist_ok=True)
                 built = []
                 for rk in master_data["roles"].keys():
-                    state = build_role_resume(rk, env_vars, master_data)
+                    res = build_role_resume(rk, env_vars, master_data)
+                    state = res[0] if isinstance(res, tuple) else res
                     with open(BUILD_DIR / f"{rk}.json", "w", encoding="utf-8") as f:
                         json.dump(state, f, indent=2)
                     built.append(rk)

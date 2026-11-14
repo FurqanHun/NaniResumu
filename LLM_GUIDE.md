@@ -75,11 +75,11 @@ Here is the job description I am targeting:
 
 Please do the following:
 1. Analyze the job posting for tech stack, core responsibilities, and seniority focus.
-2. Select the 4 or 5 most relevant projects from `data/projects.json` matching the stack.
+2. Select 4 or 5 projects from `data/projects.json` matching the stack.
 3. In `data/profile.json`, add a concise 2-3 sentence summary tailored to this position.
 4. In `data/skills.json`, verify that relevant skills match the posting keywords.
 5. In `data/roles.json`, define a new role preset using `"documentSize": "A4"` and the standard section order.
-6. Run `python3 builder.py --role <new_role_id>` to compile the Redux state.
+6. Run `python3 builder.py --role <new_role_id> --auto-fit` to compile the Redux state and verify single-page fit.
 7. Report the selected projects and role ID so I can switch to it on OpenResume.
 ```
 
@@ -92,11 +92,28 @@ When following `AGENTS.md`, the AI assistant enforces these standards:
 1. **Privacy preservation**:
    - The assistant never inspects or reads `.env` or `build/` files directly.
    - Contact details are injected by `builder.py` at build time.
-2. **ATS single-page compliance**:
-   - Caps project selection at 4 to 5 projects per resume.
-   - Limits bullets to 1 or 2 concise lines per project.
+2. **Strict single-page ATS compliance**:
+   - Strictly enforces an impact-focused single A4 page (~792pt budget).
+   - Rejects artificial multi-page string hacks (`\n\n`) that corrupt ATS text parsing.
    - Uses active past-tense verbs and avoids first-person pronouns.
    - Leaves `featuredSkills` rating circles empty by default to prevent vertical page overflow.
-3. **Harmonized section order and page sizing**:
+3. **No guessing or hallucination of missing data**:
+   - Never fabricates dates, job responsibilities, project descriptions, or credentials.
+   - Asks the user directly whenever career dates, tenure, or project details are missing from provided notes.
+4. **Settings defaults and typography guardrails**:
+   - Enforces proven defaults (A4 size, Roboto font, 11pt standard size, #38bdf8 theme color, empty featuredSkills).
+   - Never changes styling unless explicitly instructed by the user.
+   - Enforces typography safety: limits font sizes to 10-12pt and restricts fonts to OpenResume's 10 supported families to prevent text from overflowing or breaking ATS scanners.
+5. **Harmonized section order and headings**:
    - Enforces A4 page sizing (`"documentSize": "A4"`).
    - Keeps section order consistent: `workExperiences` -> `skills` -> `projects` -> `educations` -> `custom`.
+6. **Additive catalog safety**:
+   - Treats `data/*.json` as an additive master repository.
+   - Appends new role presets and projects without overwriting or truncating existing catalog entries.
+7. **ATS bullet phrasing and metrics**:
+   - Strictly enforces `antislop-copywriting` standards (eliminates AI buzzwords like *leveraged* or *spearheaded*, rejects significance inflation).
+   - Starts bullets with strong action verbs (*Engineered*, *Architected*, *Containerized*).
+   - Enforces zero first-person pronouns and concise 1-2 line density.
+8. **Link and identifier integrity**:
+   - Enforces lowercase `snake_case` IDs across all JSON catalogs.
+   - Sets `"link": ""` when URLs are unavailable instead of generating placeholder or fake domains.

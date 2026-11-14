@@ -2,12 +2,10 @@
 // @name         OpenResume Profile Switcher
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  Switch effortlessly between different ATS-friendly resumes on open-resume.com without container tabs!
+// @description  Fast profile switcher for NaniResumu on open-resume.com
 // @author       FurqanHun
 // @match        https://www.open-resume.com/resume-builder*
 // @match        http://localhost:3000/resume-builder*
-// @downloadURL  https://raw.githubusercontent.com/FurqanHun/naniresumu/master/web/openresume-switcher.user.js
-// @updateURL    https://raw.githubusercontent.com/FurqanHun/naniresumu/master/web/openresume-switcher.user.js
 // @grant        GM_xmlhttpRequest
 // @connect      127.0.0.1
 // @connect      localhost
@@ -18,6 +16,21 @@
 
     const LOCAL_SERVER = "http://127.0.0.1:4040";
 
+    // Allow scrolling inside the preview iframe
+    function enableIframeScroll() {
+        document.querySelectorAll("iframe").forEach(iframe => {
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                if (doc && doc.body && doc.body.style.overflow === "hidden") {
+                    doc.body.style.setProperty("overflow", "auto", "important");
+                }
+            } catch (e) { }
+        });
+    }
+
+    setInterval(enableIframeScroll, 1500);
+
+    // Floating Switcher Toolbar
     function createUI(resumes) {
         if (document.getElementById("openresume-switcher-bar")) {
             document.getElementById("openresume-switcher-bar").remove();
@@ -37,130 +50,86 @@
         bar.style.padding = "6px 12px";
         bar.style.borderRadius = "24px";
         bar.style.boxShadow = "0 4px 14px rgba(0,0,0,0.25)";
-        bar.style.fontSize = "13px";
-        bar.style.fontFamily = "system-ui, -apple-system, sans-serif";
         bar.style.border = "1px solid #334155";
+        bar.style.fontFamily = "system-ui, -apple-system, sans-serif";
+        bar.style.fontSize = "13px";
 
-        const label = document.createElement("span");
-        label.innerHTML = "<b>Profile:</b>";
-        bar.appendChild(label);
-
-        const select = document.createElement("select");
-        select.style.background = "#0f172a";
-        select.style.color = "#38bdf8";
-        select.style.border = "1px solid #475569";
-        select.style.padding = "4px 8px";
-        select.style.borderRadius = "6px";
-        select.style.fontWeight = "600";
-        select.style.cursor = "pointer";
-        select.setAttribute("aria-label", "Select Resume Profile");
-
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "Select Resume";
-        select.appendChild(defaultOption);
-
-        resumes.forEach(r => {
-            const opt = document.createElement("option");
-            opt.value = r.id;
-            opt.textContent = `${r.name} (${r.id})`;
-            select.appendChild(opt);
-        });
-
-        select.addEventListener("change", function () {
-            const roleId = select.value;
-            if (!roleId) return;
-            loadResume(roleId);
-        });
-
-        bar.appendChild(select);
-
-        // Sync / Refresh button
-        const refreshBtn = document.createElement("button");
-        refreshBtn.innerHTML = "Sync";
-        refreshBtn.title = "Reload resumes from local server";
-        refreshBtn.style.background = "#334155";
-        refreshBtn.style.border = "none";
-        refreshBtn.style.color = "#cbd5e1";
-        refreshBtn.style.padding = "4px 8px";
-        refreshBtn.style.borderRadius = "6px";
-        refreshBtn.style.cursor = "pointer";
-        refreshBtn.setAttribute("aria-label", "Sync Resumes");
-        refreshBtn.onclick = () => fetchResumes();
-        bar.appendChild(refreshBtn);
-
-        // Manual Paste button (fallback if local server isn't running)
-        const pasteBtn = document.createElement("button");
-        pasteBtn.innerHTML = "Paste JSON";
-        pasteBtn.title = "Manually paste an open-resume-state JSON";
-        pasteBtn.style.background = "#334155";
-        pasteBtn.style.border = "none";
-        pasteBtn.style.color = "#cbd5e1";
-        pasteBtn.style.padding = "4px 8px";
-        pasteBtn.style.borderRadius = "6px";
-        pasteBtn.style.cursor = "pointer";
-        pasteBtn.setAttribute("aria-label", "Paste JSON Manually");
-        pasteBtn.onclick = () => {
-            const raw = prompt("Paste your OpenResume state JSON here:");
-            if (raw) {
-                try {
-                    const parsed = JSON.parse(raw);
-                    localStorage.setItem("open-resume-state", JSON.stringify(parsed));
-                    window.location.reload();
-                } catch (e) {
-                    alert("Invalid JSON: " + e.message);
-                }
-            }
-        };
-        bar.appendChild(pasteBtn);
+        bar.innerHTML = `
+            <span style="font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 4px;">
+                ⚡ NaniResumu
+            </span>
+            <select id="nr-role-select" style="background: #0f172a; color: #f8fafc; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                <option value="" disabled selected>Select Role Preset...</option>
+                ${resumes.map(r => `<option value="${r.id}">${r.name} (${r.id})</option>`).join("")}
+            </select>
+            <button id="nr-paste-btn" title="Paste JSON manually" style="background: #334155; color: #e2e8f0; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                📋 Paste
+            </button>
+        `;
 
         document.body.appendChild(bar);
+
+        const select = document.getElementById("nr-role-select");
+        select.addEventListener("change", (e) => {
+            const roleId = e.target.value;
+            if (!roleId) return;
+
+            select.disabled = true;
+            loadRoleFromBackend(roleId, () => {
+                select.disabled = false;
+            });
+        });
+
+        document.getElementById("nr-paste-btn").addEventListener("click", () => {
+            const text = prompt("Paste your compiled OpenResume JSON here:");
+            if (text) {
+                try {
+                    const parsed = JSON.parse(text);
+                    localStorage.setItem("open-resume-state", JSON.stringify(parsed));
+                    location.reload();
+                } catch (err) {
+                    alert("Invalid JSON format: " + err.message);
+                }
+            }
+        });
     }
 
-    function loadResume(roleId) {
-        console.log(`[OpenResume Switcher] Loading resume for role '${roleId}'...`);
-        const url = `${LOCAL_SERVER}/api/resume?role=${roleId}`;
-
-        const req = (typeof GM_xmlhttpRequest !== "undefined") ? GM_xmlhttpRequest : window.fetch;
-
+    function loadRoleFromBackend(roleId, onDone) {
         if (typeof GM_xmlhttpRequest !== "undefined") {
             GM_xmlhttpRequest({
                 method: "GET",
-                url: url,
+                url: `${LOCAL_SERVER}/api/resume?role=${roleId}`,
                 onload: function (response) {
-                    if (response.status >= 200 && response.status < 300) {
-                        try {
-                            const data = JSON.parse(response.responseText);
-                            localStorage.setItem("open-resume-state", JSON.stringify(data));
-                            console.log("[OpenResume Switcher] Resume state saved to localStorage. Reloading...");
-                            window.location.reload();
-                        } catch (e) {
-                            alert("Failed to parse response JSON: " + e.message);
-                        }
-                    } else {
-                        alert(`Server returned error ${response.status}: ${response.statusText}`);
+                    try {
+                        const data = JSON.parse(response.responseText);
+                        localStorage.setItem("open-resume-state", JSON.stringify(data));
+                        location.reload();
+                    } catch (e) {
+                        alert("Error parsing resume JSON: " + e.message);
+                        if (onDone) onDone();
                     }
                 },
-                onerror: function (err) {
-                    alert("Could not connect to NaniResumu local server at " + LOCAL_SERVER + ". Please make sure `python server.py` is running!");
+                onerror: function () {
+                    alert("Could not reach local server at " + LOCAL_SERVER + ". Is server.py running?");
+                    if (onDone) onDone();
                 }
             });
         } else {
-            fetch(url)
-                .then(res => res.json())
+            fetch(`${LOCAL_SERVER}/api/resume?role=${roleId}`)
+                .then(r => r.json())
                 .then(data => {
                     localStorage.setItem("open-resume-state", JSON.stringify(data));
-                    window.location.reload();
+                    location.reload();
                 })
                 .catch(err => {
-                    alert("Could not connect to NaniResumu server: " + err.message);
+                    alert("Could not reach local server: " + err.message);
+                    if (onDone) onDone();
                 });
         }
     }
 
-    function fetchResumes() {
-        const url = `${LOCAL_SERVER}/api/resumes`;
-        const fallbackResumes = [
+    function fetchRoles() {
+        const fallbackRoles = [
             { id: "sqa", name: "SQA Trainee" },
             { id: "devops", name: "DevOps Trainee / Engineer" },
             { id: "web_dev", name: "Web / Mobile Developer" },
@@ -173,35 +142,29 @@
         if (typeof GM_xmlhttpRequest !== "undefined") {
             GM_xmlhttpRequest({
                 method: "GET",
-                url: url,
-                onload: function (response) {
-                    if (response.status === 200) {
-                        try {
-                            const list = JSON.parse(response.responseText);
-                            createUI(list);
-                        } catch (e) {
-                            createUI(fallbackResumes);
-                        }
-                    } else {
-                        createUI(fallbackResumes);
+                url: `${LOCAL_SERVER}/api/resumes`,
+                onload: function (res) {
+                    try {
+                        createUI(JSON.parse(res.responseText));
+                    } catch (e) {
+                        createUI(fallbackRoles);
                     }
                 },
                 onerror: function () {
-                    createUI(fallbackResumes);
+                    createUI(fallbackRoles);
                 }
             });
         } else {
-            fetch(url)
+            fetch(`${LOCAL_SERVER}/api/resumes`)
                 .then(r => r.json())
-                .then(list => createUI(list))
-                .catch(() => createUI(fallbackResumes));
+                .then(createUI)
+                .catch(() => createUI(fallbackRoles));
         }
     }
 
-    // Wait for DOM to be ready
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", fetchResumes);
+        document.addEventListener("DOMContentLoaded", fetchRoles);
     } else {
-        fetchResumes();
+        fetchRoles();
     }
 })();

@@ -54,3 +54,4 @@ Thumbs.db
 .fuse_hidden*
 .directory
 .Trash-*
+*.log

@@ -165,7 +165,7 @@ Key architectural notes:
   npm run dev
   ```
   The included userscript ([web/openresume-switcher.user.js](web/openresume-switcher.user.js)) already matches both `https://www.open-resume.com/resume-builder*` and `http://localhost:3000/resume-builder*`.
-- **Zero vendor lock-in**: Your master data is maintained in clean JSON files inside `data/`. If you ever switch to another resume renderer (such as Typst, LaTeX, or a custom HTML template), your project catalog, experience bullets, and skills remain portable and independent.
+- **Zero vendor lock-in**: Your master data is maintained in clean JSON files inside `data/`. If you ever switch to another resume renderer (such as jsonresume, Typst, LaTeX, or a custom HTML template), your project catalog, experience bullets, and skills remain portable and independent. Maybe in future the builder would allow export to multiple formats.
 
 ---
 
