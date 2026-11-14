@@ -79,17 +79,17 @@ Compiled OpenResume Redux state files are written to `build/<role>.json`.
 
 Build a single role preset:
 ```bash
-python3 builder.py --role sqa
+python3 builder.py --role software_engineer
 ```
 
 Build and copy the JSON state directly to your system clipboard:
 ```bash
-python3 builder.py --role sqa --copy
+python3 builder.py --role software_engineer --copy
 ```
 
 Print the generated JSON state to standard output:
 ```bash
-python3 builder.py --role sqa --print
+python3 builder.py --role software_engineer --print
 ```
 
 List all available role presets:
@@ -135,19 +135,6 @@ See [LLM_GUIDE.md](LLM_GUIDE.md) for ready-to-copy prompts covering:
 3. **Job-targeted tailoring**: Automatically matching keywords, drafting summaries, and generating single-page A4 presets.
 
 All architectural constraints, ATS standards, and privacy rules for AI agents are defined in [AGENTS.md](AGENTS.md).
-
----
-
-## Pre-configured roles
-
-The master database includes presets for common technical positions:
-- **`sqa`**: Manual test execution, test case design, defect tracking, regression testing, and API verification.
-- **`devops`**: Linux system administration, containerization with Docker Compose, shell automation, CI/CD, and networking.
-- **`web_dev`**: Modern web development using Next.js, React, TypeScript, Tailwind CSS, REST APIs, and React Native.
-- **`cybersecurity`**: System auditing, security utilities, permission models, firewalls, and SPII redaction tooling.
-- **`it_officer`**: Network troubleshooting, hardware diagnostics, Linux/Windows administration, and maintenance scripting.
-- **`ml_python`**: Python data pipelines, text processing, OCR/CV redaction, and algorithmic problem solving.
-- **`game_dev`**: 2D/3D gameplay mechanics, C# scripting, physics simulation, and state machine architecture in Unity.
 
 ---
 
