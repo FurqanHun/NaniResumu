@@ -1,0 +1,74 @@
+{
+  "software_engineer": {
+    "name": "Software Engineer",
+    "summary_key": "software_engineer",
+    "educations": ["sample_university"],
+    "work_experiences": ["sample_company"],
+    "projects": ["sample_project_1", "sample_project_2"],
+    "skills_key": "software_engineer",
+    "custom_type": "certifications",
+    "settings": {
+      "themeColor": "#38bdf8",
+      "fontFamily": "Roboto",
+      "fontSize": "11",
+      "documentSize": "A4",
+      "formToShow": {
+        "workExperiences": true,
+        "educations": true,
+        "projects": true,
+        "skills": true,
+        "custom": true
+      },
+      "formToHeading": {
+        "workExperiences": "WORK EXPERIENCE",
+        "skills": "SKILLS",
+        "projects": "RELEVANT PROJECTS",
+        "educations": "EDUCATION",
+        "custom": "CERTIFICATIONS"
+      },
+      "formsOrder": ["workExperiences", "skills", "projects", "educations", "custom"],
+      "showBulletPoints": {
+        "educations": false,
+        "projects": true,
+        "skills": true,
+        "custom": true
+      }
+    }
+  },
+  "qa_engineer": {
+    "name": "QA Engineer",
+    "summary_key": "qa_engineer",
+    "educations": ["sample_university"],
+    "work_experiences": ["sample_company"],
+    "projects": ["sample_project_1"],
+    "skills_key": "qa_engineer",
+    "custom_type": "certifications",
+    "settings": {
+      "themeColor": "#38bdf8",
+      "fontFamily": "Roboto",
+      "fontSize": "11",
+      "documentSize": "A4",
+      "formToShow": {
+        "workExperiences": true,
+        "educations": true,
+        "projects": true,
+        "skills": true,
+        "custom": true
+      },
+      "formToHeading": {
+        "workExperiences": "WORK EXPERIENCE",
+        "skills": "SKILLS",
+        "projects": "RELEVANT PROJECTS",
+        "educations": "EDUCATION",
+        "custom": "CERTIFICATIONS"
+      },
+      "formsOrder": ["workExperiences", "skills", "projects", "educations", "custom"],
+      "showBulletPoints": {
+        "educations": false,
+        "projects": true,
+        "skills": true,
+        "custom": true
+      }
+    }
+  }
+}

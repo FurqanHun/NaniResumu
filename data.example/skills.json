@@ -1,0 +1,15 @@
+{
+  "role_skills": {
+    "software_engineer": [
+      "Languages: Python, JavaScript, TypeScript, SQL, Bash",
+      "Frameworks: React, Next.js, Node.js, Express, FastAPI",
+      "Databases & Tools: PostgreSQL, Redis, Docker, Git, Linux"
+    ],
+    "qa_engineer": [
+      "Testing: Manual Testing, Regression Testing, Test Case Design, API Testing (Postman)",
+      "Tools: Jira, Git, Chrome DevTools, Linux, Bash",
+      "Core Knowledge: SDLC, STLC, Defect Lifecycle, Smoke Testing"
+    ]
+  },
+  "featured_skills": {}
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "id": "sample_university",
+    "school": "Sample University",
+    "degree": "Bachelor of Science in Software Engineering",
+    "date": "Sep 2022 - Aug 2026",
+    "gpa": "3.5",
+    "descriptions": []
+  }
+]

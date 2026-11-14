@@ -1,0 +1,30 @@
+[
+  {
+    "id": "sample_project_1",
+    "project": "TaskFlow: Task Management System",
+    "date": "Jan 2024 - Mar 2024",
+    "link": "https://github.com/example/taskflow",
+    "tags": ["React", "FastAPI", "PostgreSQL"],
+    "descriptions": [
+      "Engineered a full-stack task management application with role-based access control and real-time updates.",
+      "Implemented indexed SQL queries and pagination to handle datasets exceeding 50,000 active records."
+    ],
+    "role_descriptions": {
+      "qa_engineer": [
+        "Authored comprehensive test suites covering user authentication, data authorization, and edge cases.",
+        "Performed cross-browser validation and automated regression checks using Playwright."
+      ]
+    }
+  },
+  {
+    "id": "sample_project_2",
+    "project": "LogMonitor: Containerized Log Indexer",
+    "date": "Aug 2023 - Nov 2023",
+    "link": "https://github.com/example/logmonitor",
+    "tags": ["Python", "Docker", "Linux"],
+    "descriptions": [
+      "Built a lightweight log monitoring daemon in Python that parses syslog streams and surfaces anomalies.",
+      "Containerized deployment using Docker Compose with automated log rotation and resource limits."
+    ]
+  }
+]

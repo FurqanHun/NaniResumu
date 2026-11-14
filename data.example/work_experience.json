@@ -1,0 +1,18 @@
+[
+  {
+    "id": "sample_company",
+    "company": "Sample Tech Company",
+    "jobTitle": "Software Engineering Intern",
+    "date": "Jun 2024 - Aug 2024",
+    "descriptions": [
+      "Assisted in developing RESTful API endpoints and background services using Python and PostgreSQL.",
+      "Designed unit tests and validation scripts to verify database transactions and payload integrity."
+    ],
+    "role_descriptions": {
+      "qa_engineer": [
+        "Authored manual test cases and regression matrices for web features across staging and production.",
+        "Documented, tracked, and verified defect lifecycles in Jira, collaborating directly with backend developers."
+      ]
+    }
+  }
+]

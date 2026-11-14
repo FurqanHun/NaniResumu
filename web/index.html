@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NaniResumu: Resume Control Center</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151e2e;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --btn-sec-bg: #334155;
+      --btn-sec-hover: #475569;
+      --success: #10b981;
+      --error-bg: #450a0a;
+      --error-border: #991b1b;
+      --error-text: #fecaca;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: clamp(16px, 4vw, 32px) clamp(14px, 3vw, 24px);
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 20px;
+      gap: 16px;
+    }
+    .header-info h1 {
+      font-size: clamp(20px, 4vw, 26px);
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .header-info p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: var(--accent);
+      color: #0b0f19;
+      border: 1px solid var(--accent);
+      padding: 10px 18px;
+      min-height: 44px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+    .btn:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    .btn:active {
+      transform: translateY(1px);
+      filter: brightness(0.92);
+    }
+    .btn:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+    .btn-secondary {
+      background: var(--btn-sec-bg);
+      color: var(--text-main);
+      border: 1px solid #475569;
+    }
+    .btn-secondary:hover {
+      background: var(--btn-sec-hover);
+      border-color: #64748b;
+    }
+    .btn-secondary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .banner {
+      background: #1e293b;
+      border-left: 4px solid var(--accent);
+      border-top: 1px solid var(--card-border);
+      border-right: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .banner h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .banner ul {
+      margin-left: 20px;
+      line-height: 1.6;
+    }
+    .banner a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .banner a:hover {
+      text-decoration: underline;
+    }
+    .banner a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease;
+    }
+    .card:hover {
+      border-color: var(--accent);
+    }
+    .card:focus-within {
+      border-color: var(--accent);
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .card-meta strong {
+      color: var(--text-main);
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .card-actions .btn {
+      font-size: 12px;
+      padding: 7px 12px;
+      min-height: 38px;
+      flex: 1 1 auto;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #0f172a;
+      color: var(--accent);
+      border: 1px solid #334155;
+    }
+    .status-msg {
+      padding: 32px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 15px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      grid-column: 1 / -1;
+    }
+    .status-error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+      color: var(--error-text);
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 10000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .header-actions {
+        width: 100%;
+      }
+      .header-actions .btn {
+        flex: 1 1 100%;
+      }
+      .card-actions .btn {
+        flex: 1 1 100%;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="header-info">
+        <h1>NaniResumu: Resume Control Center</h1>
+        <p>Single source of truth for ATS resumes on OpenResume</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-secondary" onclick="rebuildAll()">Rebuild All</button>
+        <a class="btn" href="https://www.open-resume.com/resume-builder" target="_blank" rel="noopener noreferrer">Open-Resume.com &rarr;</a>
+      </div>
+    </header>
+
+    <section class="banner" aria-label="Integration Instructions">
+      <h2>Switch resumes on OpenResume via either integration:</h2>
+      <ul>
+        <li><strong>Tampermonkey:</strong> Install the <a href="/openresume-switcher.user.js" target="_blank">OpenResume Profile Switcher userscript</a> to select profiles from a dropdown directly in OpenResume.</li>
+        <li><strong>Bookmarklet:</strong> Drag this link to your bookmarks bar: <a href="javascript:(function(){const s='http://127.0.0.1:4040';let o=document.getElementById('nr-modal');if(o)o.remove();const m=document.createElement('div');m.id='nr-modal';m.style='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;';const b=document.createElement('div');b.style='background:#1e293b;color:#f8fafc;padding:24px;border-radius:16px;max-width:440px;width:90%;box-shadow:0 10px 25px rgba(0,0,0,0.5);border:1px solid #334155;';b.innerHTML='<div style=\'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;\'><h3 style=\'margin:0;font-size:18px;color:#38bdf8;\'>NaniResumu Switcher</h3><button id=\'nr-close\' style=\'background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;\'>&times;</button></div><p style=\'color:#94a3b8;font-size:13px;margin-bottom:16px;\'>Select a profile to load into OpenResume:</p><div id=\'nr-list\' style=\'display:flex;flex-direction:column;gap:8px;\'></div><hr style=\'border:0;border-top:1px solid #334155;margin:16px 0;\'><button id=\'nr-paste\' style=\'width:100%;background:#334155;color:#e2e8f0;padding:8px;border-radius:8px;border:none;cursor:pointer;font-size:13px;\'>Paste JSON Manually</button>';m.appendChild(b);document.body.appendChild(m);document.getElementById('nr-close').onclick=()=>m.remove();document.getElementById('nr-paste').onclick=()=>{const t=prompt('Paste OpenResume JSON:');if(t){try{localStorage.setItem('open-resume-state',JSON.stringify(JSON.parse(t)));location.reload();}catch(e){alert('Invalid JSON: '+e.message);}}};const defs=[{id:'sqa',name:'SQA Trainee'},{id:'devops',name:'DevOps Trainee / Engineer'},{id:'web_dev',name:'Web / Mobile Developer'},{id:'cybersecurity',name:'Cybersecurity Intern'},{id:'it_officer',name:'IT Officer / Systems & Network'},{id:'ml_python',name:'Python & NLP / Data Developer'},{id:'game_dev',name:'Game Developer / Unity & C#'}];function render(l){const c=document.getElementById('nr-list');c.innerHTML='';l.forEach(r=>{const btn=document.createElement('button');btn.style='background:#0f172a;color:#f8fafc;padding:10px 14px;border:1px solid #334155;border-radius:8px;cursor:pointer;text-align:left;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:background 0.2s;';btn.innerHTML='<span>'+r.name+'</span> <span style=\'color:#38bdf8;font-size:12px;\'>'+r.id+' &rarr;</span>';btn.onmouseover=()=>btn.style.background='#1e293b';btn.onmouseout=()=>btn.style.background='#0f172a';btn.onclick=()=>{btn.disabled=true;btn.textContent='Loading...';fetch(s+'/api/resume?role='+r.id).then(res=>res.json()).then(data=>{localStorage.setItem('open-resume-state',JSON.stringify(data));location.reload();}).catch(e=>{alert('Failed loading: '+e.message);btn.disabled=false;});};c.appendChild(btn);});}fetch(s+'/api/resumes').then(r=>r.json()).then(render).catch(()=>render(defs));})();">NaniResumu Switcher</a> to switch resumes in open-resume.com anytime.</li>
+      </ul>
+    </section>
+
+    <h2 class="section-title">Saved Resume Profiles</h2>
+    <div class="grid" id="resumeGrid" aria-live="polite">
+      <div class="status-msg" id="statusMessage">Loading profiles...</div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-atomic="true">Copied to clipboard.</div>
+
+  <script>
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
+    async function copyResumeJSON(roleId) {
+      try {
+        const res = await fetch(`/api/resume?role=${roleId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+        showToast(`Copied ${roleId.toUpperCase()} JSON to clipboard.`);
+      } catch (err) {
+        alert("Error fetching resume: " + err.message);
+      }
+    }
+
+    function openInOpenResumeWithCopy(roleId) {
+      copyResumeJSON(roleId).then(() => {
+        alert(`Copied ${roleId.toUpperCase()} JSON to clipboard.\n\nOpening OpenResume now. Use the Tampermonkey Switcher dropdown or click the Bookmarklet to load it immediately.`);
+        window.open("https://www.open-resume.com/resume-builder", "_blank", "noopener,noreferrer");
+      });
+    }
+
+    async function rebuildAll() {
+      try {
+        const res = await fetch("/api/build", { method: "POST" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        showToast("Rebuilt all resumes successfully.");
+        loadResumes();
+      } catch (e) {
+        alert("Build failed: " + e.message);
+      }
+    }
+
+    async function loadResumes() {
+      const grid = document.getElementById("resumeGrid");
+      grid.innerHTML = '<div class="status-msg">Loading profiles...</div>';
+      try {
+        const res = await fetch("/api/resumes");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const list = await res.json();
+        grid.innerHTML = "";
+
+        if (!list || list.length === 0) {
+          grid.innerHTML = '<div class="status-msg">No profiles found in roles.json.</div>';
+          return;
+        }
+
+        list.forEach(r => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
+            <div>
+              <div class="card-title">
+                <span>${r.name}</span>
+                <span class="badge">${r.id}</span>
+              </div>
+              <div class="card-meta">
+                &bull; <strong>Projects:</strong> ${r.projects_count}<br>
+                &bull; <strong>Work Experience:</strong> ${r.has_work_exp ? "Included" : "None"}<br>
+                &bull; <strong>Format:</strong> ATS-compliant A4
+              </div>
+            </div>
+            <div class="card-actions">
+              <button type="button" class="btn btn-secondary" onclick="copyResumeJSON('${r.id}')">Copy JSON</button>
+              <a class="btn btn-secondary" href="/api/resume?role=${r.id}" download="${r.id}_openresume.json">Download</a>
+              <button type="button" class="btn" onclick="openInOpenResumeWithCopy('${r.id}')">Open Site</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (e) {
+        grid.innerHTML = `
+          <div class="status-msg status-error">
+            Failed to load resume profiles (${e.message}). Ensure the local server is running at port 4040.
+            <div style="margin-top: 12px;">
+              <button type="button" class="btn btn-secondary" onclick="loadResumes()">Retry</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    loadResumes();
+  </script>
+</body>
+</html>
